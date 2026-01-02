@@ -5,6 +5,7 @@ async function initDatabase() {
   try {
     console.log("🔧 Initializing database schema...");
 
+    // Create users table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -15,6 +16,7 @@ async function initDatabase() {
       )
     `);
 
+    // Create groups table - FIXED: using created_by, not user_id
     await pool.query(`
       CREATE TABLE IF NOT EXISTS groups (
         id SERIAL PRIMARY KEY,
@@ -24,7 +26,7 @@ async function initDatabase() {
       )
     `);
 
-
+    // Create tasks table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS tasks (
         id SERIAL PRIMARY KEY,
@@ -37,6 +39,7 @@ async function initDatabase() {
       )
     `);
 
+    // Create user_streaks table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_streaks (
         id SERIAL PRIMARY KEY,
@@ -47,7 +50,7 @@ async function initDatabase() {
       )
     `);
 
-
+    // Create comments table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS comments (
         id SERIAL PRIMARY KEY,
@@ -58,9 +61,20 @@ async function initDatabase() {
       )
     `);
 
+    // Create group_members table (if you need many-to-many relationship)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS group_members (
+        id SERIAL PRIMARY KEY,
+        group_id INT REFERENCES groups(id) ON DELETE CASCADE,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (group_id, user_id)
+      )
+    `);
+
     console.log("✅ All tables ensured");
 
-
+    // Check if admin user exists
     const { rows } = await pool.query(
       "SELECT COUNT(*) FROM users"
     );
@@ -72,18 +86,24 @@ async function initDatabase() {
 
       await pool.query(
         `INSERT INTO users (name, email, password)
-         VALUES ($1, $2, $3)`,
+         VALUES ($1, $2, $3) RETURNING id`,
         ["Admin", "admin@test.com", hashedPassword]
       );
 
-      console.log(" Default admin user created");
+      console.log("✅ Default admin user created");
     } else {
-      console.log(" Users already exist");
+      console.log("ℹ️ Users already exist");
     }
 
+    console.log("✅ Database initialization completed successfully");
+
   } catch (error) {
-    console.error(" Database initialization failed:", error);
-    process.exit(1);
+    console.error("❌ Database initialization failed:", error.message);
+    console.error("Full error:", error);
+    // Don't exit in production, just log the error
+    if (process.env.NODE_ENV === 'development') {
+      process.exit(1);
+    }
   }
 }
 
