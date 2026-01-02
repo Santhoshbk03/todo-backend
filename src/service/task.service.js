@@ -18,12 +18,36 @@ export const createTaskService = async (userId, data) => {
     throw { status: 403, message: "Invalid group access" };
   }
 
-  const result = await pool.query(
-    `INSERT INTO tasks (group_id, title, description, priority)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *`,
-    [group_id, title, description || null, priority || "MEDIUM"]
-  );
+const result = await pool.query(
+  `INSERT INTO tasks (user_id, group_id, title, description, priority, status, progress, completed)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+   RETURNING *`,
+  [
+    userId, 
+    group_id, 
+    title, 
+    description || null, 
+    priority || "MEDIUM", 
+    "PENDING", 
+    0,
+    false
+  ]
+);
+
+
+let finalStatus = status;
+let finalProgress = progress;
+let finalCompleted = completed;
+
+if (status === 'DONE') {
+  finalProgress = 100;
+  finalCompleted = true;
+} else if (progress === 100) {
+  finalStatus = 'DONE';
+  finalCompleted = true;
+} else if (progress > 0) {
+  finalStatus = 'IN_PROGRESS';
+}
 
   return result.rows[0];
 };
