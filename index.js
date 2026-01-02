@@ -1,21 +1,21 @@
+// 🔹 Load dotenv ONLY in local development
 if (process.env.NODE_ENV !== "production") {
   await import("dotenv/config");
 }
+
 import express from "express";
 import initDatabase from "./src/config/defaultUser.js";
 import indexRouter from "./src/routes/index.js";
 
-dotenv.config();
-
 const app = express();
 app.use(express.json());
 
-
+// Routes
 app.use("/api", indexRouter);
 
 const PORT = process.env.PORT || 10000;
 
-// 🔹 Run DB init SAFELY
+// 🔹 Initialize DB safely (no crash on failure)
 (async () => {
   try {
     console.log("🔧 Initializing database schema...");
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 10000;
   }
 })();
 
-// 🔹 Start server WITHOUT await
+// 🔹 Start server (Render requires process to stay alive)
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
