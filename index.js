@@ -9,8 +9,9 @@ const app = express();
 // CORS configuration
 const corsOptions = {
   origin: [
-    "https://todo-frontend-xpz1.vercel.app", // Your Vercel frontend
-    "http://localhost:3000", // Local development
+    "https://todo-frontend-xpz1-santhoshs-projects-0bd19b5e.vercel.app", // Your Vercel frontend
+    "http://localhost:3000", 
+    // Local development
     process.env.FRONTEND_URL // Optional: from environment variable
   ].filter(Boolean), // Remove any falsy values
   credentials: true,
