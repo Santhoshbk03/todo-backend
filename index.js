@@ -10,7 +10,7 @@ const corsOptions = {
   origin: [
     "https://todo-frontend-xpz1-7b2u7z344-santhoshs-projects-0bd19b5e.vercel.app", 
     "https://todo-frontend-xpz1.vercel.app",
-    "http://localhost:3000", 
+    "http://localhost:5173", 
     process.env.FRONTEND_URL 
   ].filter(Boolean), 
   credentials: true,
