@@ -1,18 +1,29 @@
 import express from "express";
-import cors from "cors";  
-import initDefaultUser from "./src/config/defaultUser.js";
-import indexrouter from "./src/routes/index.js";
+import dotenv from "dotenv";
+import initDatabase from "./src/config/defaultUser.js";
+import indexRouter from "./src/routes/index.js";
+
+dotenv.config();
 
 const app = express();
-
-const port = process.env.PORT || 4000;
 app.use(express.json());
-app.use(cors());
 
+app.use("/api", indexRouter);
 
-app.use("/api", indexrouter);
+const PORT = process.env.PORT || 10000;
 
-app.listen(port, async () => {
-  console.log("app run at port : ", port);
-  await initDefaultUser();
+// 🔹 Run DB init SAFELY
+(async () => {
+  try {
+    console.log("🔧 Initializing database schema...");
+    await initDatabase();
+    console.log("✅ Database ready");
+  } catch (err) {
+    console.error("⚠️ DB init failed, continuing without crash:", err.message);
+  }
+})();
+
+// 🔹 Start server WITHOUT await
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
