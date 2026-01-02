@@ -8,7 +8,7 @@ const app = express();
 
 const corsOptions = {
   origin: [
-    "https://todo-frontend-xpz1-7b2u7z344-santhoshs-projects-0bd19b5e.vercel.app", 
+    "https://todo-frontend-xpz1-18jha3ale-santhoshs-projects-0bd19b5e.vercel.app", 
     "https://todo-frontend-xpz1.vercel.app",
     "http://localhost:5173", 
     process.env.FRONTEND_URL 
