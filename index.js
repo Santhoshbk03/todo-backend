@@ -1,5 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+  await import("dotenv/config");
+}
 import express from "express";
-import dotenv from "dotenv";
 import initDatabase from "./src/config/defaultUser.js";
 import indexRouter from "./src/routes/index.js";
 
@@ -7,6 +9,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+
 
 app.use("/api", indexRouter);
 
