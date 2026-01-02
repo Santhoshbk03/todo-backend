@@ -16,9 +16,9 @@ const pool = new Pool({
 
 
 
-// pool.on("connect",()=>{
-//     console.log("pg connected")
-// })
+pool.on("connect",()=>{
+    console.log("pg connected")
+})
 
 
 pool.on("error",()=>{
