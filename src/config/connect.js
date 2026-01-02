@@ -1,25 +1,22 @@
-import {Pool } from "pg"
+import { Pool } from "pg"
 
-
+console.log('Connecting to database:', process.env.DATABASE_URL ? 
+  process.env.DATABASE_URL.replace(/:[^:]*@/, ':****@') : 
+  'DATABASE_URL not set');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false,
-  },
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false
+  } : false,
 });
 
+pool.on("connect", () => {
+  console.log("✅ PostgreSQL connected successfully");
+});
 
-
-pool.on("connect",()=>{
-    console.log("pg connected")
-})
-
-
-pool.on("error",()=>{
-    console.log("pg error");
-})
-
+pool.on("error", (err) => {
+  console.error("❌ PostgreSQL connection error:", err.message);
+});
 
 export default pool;
