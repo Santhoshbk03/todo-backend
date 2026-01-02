@@ -2,6 +2,11 @@ import { getDashboardService, getStreakService } from "../service/dashboard.serv
 
 export const getDashboard = async (req, res) => {
   try {
+    // Set headers to prevent caching
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
     const data = await getDashboardService(req.user.id);
     res.status(200).json(data);
   } catch (error) {
