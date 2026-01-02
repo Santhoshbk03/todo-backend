@@ -9,7 +9,7 @@ const app = express();
 const corsOptions = {
   origin: [
     "https://todo-frontend-xpz1-5w4pliqpk-santhoshs-projects-0bd19b5e.vercel.app", 
-    "https://todo-frontend-xpz1.vercel.app", 
+    "https://todo-frontend-xpz1.vercel.app",
     "http://localhost:3000", 
     process.env.FRONTEND_URL 
   ].filter(Boolean), 
@@ -19,9 +19,8 @@ const corsOptions = {
   exposedHeaders: ["Content-Range", "X-Content-Range"]
 };
 
+// Only use this - it handles both regular requests and OPTIONS preflight
 app.use(cors(corsOptions));
-
-app.options("/*", cors(corsOptions));
 
 app.use(express.json());
 
@@ -55,4 +54,9 @@ app.get('/health', (req, res) => {
       allowedOrigins: corsOptions.origin
     }
   });
+});
+
+// 404 handler (optional)
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
